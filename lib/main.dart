@@ -20,7 +20,7 @@ class JsonFetchPage extends StatefulWidget {
 }
 
 class _JsonFetchPageState extends State<JsonFetchPage> {
-  String _data = '';
+  List<String> _categoryNames = [];
 
   @override
   void initState() {
@@ -32,28 +32,51 @@ class _JsonFetchPageState extends State<JsonFetchPage> {
     final response = await http.get(Uri.parse('https://menu.5ch.net/bbsmenu.json'));
 
     if (response.statusCode == 200) {
+      final jsonData = json.decode(utf8.decode(response.bodyBytes));
+      final List<dynamic> menuList = jsonData['menu_list'];
+
       setState(() {
-        // 明示的にUTF-8でデコード
-        _data = utf8.decode(response.bodyBytes);
+        _categoryNames = menuList.map((item) => item['category_name'].toString()).toList();
       });
     } else {
       setState(() {
-        _data = 'Failed to load data';
+        _categoryNames = ['Failed to load data'];
       });
     }
+  }
+
+  Border _determineBorder(int index) {
+    bool isFirstRow = index < 2; // 2列なので、インデックスが0または1の場合は最初の行
+    return Border(
+      top: isFirstRow ? BorderSide(color: Colors.grey) : BorderSide.none,
+      right: (index % 2 == 0) ? BorderSide(color: Colors.grey) : BorderSide.none,
+      bottom: BorderSide(color: Colors.grey),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('JSON Fetch Example'),
+        title: Text('Category Names with Grid Lines'),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Text(_data),
+      body: GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2, // 2列で表示
+          crossAxisSpacing: 0.0, // 横方向の間隔
+          mainAxisSpacing: 0.0, // 縦方向の間隔（行間）を小さくする
+          childAspectRatio: 6, // アイテムの縦横比を調整
         ),
+        itemCount: _categoryNames.length,
+        itemBuilder: (context, index) {
+          return Container(
+            decoration: BoxDecoration(
+              border: _determineBorder(index),
+            ),
+            alignment: Alignment.center,
+            child: Text(_categoryNames[index]),
+          );
+        },
       ),
     );
   }
