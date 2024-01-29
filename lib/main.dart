@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'board_list_page.dart';
+import 'slide_right_route.dart';
 
 void main() => runApp(MyApp());
 
@@ -69,12 +71,17 @@ class _JsonFetchPageState extends State<JsonFetchPage> {
         ),
         itemCount: _categoryNames.length,
         itemBuilder: (context, index) {
-          return Container(
-            decoration: BoxDecoration(
-              border: _determineBorder(index),
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(context, SlideRightRoute(page: BoardListPage(categoryName: _categoryNames[index])));
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                border: _determineBorder(index),
+              ),
+              alignment: Alignment.center,
+              child: Text(_categoryNames[index]),
             ),
-            alignment: Alignment.center,
-            child: Text(_categoryNames[index]),
           );
         },
       ),
