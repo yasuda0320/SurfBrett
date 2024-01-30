@@ -4,12 +4,14 @@ import 'package:http/http.dart' as http;
 import 'board_list_page.dart';
 import 'slide_right_route.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Flutter Demo',
       home: JsonFetchPage(),
     );
@@ -17,11 +19,13 @@ class MyApp extends StatelessWidget {
 }
 
 class JsonFetchPage extends StatefulWidget {
+  const JsonFetchPage({super.key});
+
   @override
-  _JsonFetchPageState createState() => _JsonFetchPageState();
+  JsonFetchPageState createState() => JsonFetchPageState();
 }
 
-class _JsonFetchPageState extends State<JsonFetchPage> {
+class JsonFetchPageState extends State<JsonFetchPage> {
   List<String> _categoryNames = [];
 
   @override
@@ -50,9 +54,9 @@ class _JsonFetchPageState extends State<JsonFetchPage> {
   Border _determineBorder(int index) {
     bool isFirstRow = index < 2; // 2列なので、インデックスが0または1の場合は最初の行
     return Border(
-      top: isFirstRow ? BorderSide(color: Colors.grey) : BorderSide.none,
-      right: (index % 2 == 0) ? BorderSide(color: Colors.grey) : BorderSide.none,
-      bottom: BorderSide(color: Colors.grey),
+      top: isFirstRow ? const BorderSide(color: Colors.grey) : BorderSide.none,
+      right: (index % 2 == 0) ? const BorderSide(color: Colors.grey) : BorderSide.none,
+      bottom: const BorderSide(color: Colors.grey),
     );
   }
 
@@ -60,10 +64,10 @@ class _JsonFetchPageState extends State<JsonFetchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Category Names with Grid Lines'),
+        title: const Text('Category Names with Grid Lines'),
       ),
       body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2, // 2列で表示
           crossAxisSpacing: 0.0, // 横方向の間隔
           mainAxisSpacing: 0.0, // 縦方向の間隔（行間）を小さくする
