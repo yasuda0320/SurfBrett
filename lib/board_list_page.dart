@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'category.dart';
 
 class BoardListPage extends StatelessWidget {
-  final String categoryName;
+  final Category category;
   final double _minimumDragDistance = 100; // 最小のフリック距離を設定
 
-  const BoardListPage({Key? key, required this.categoryName}) : super(key: key);
+  const BoardListPage({Key? key, required this.category}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +27,15 @@ class BoardListPage extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(categoryName),
+          title: Text(category.categoryName),
         ),
-        body: Center(
-          child: Text('Board list for $categoryName will be displayed here.'),
+        body: ListView.builder(
+          itemCount: category.boards.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text(category.boards[index].boardName),
+            );
+          },
         ),
       ),
     );

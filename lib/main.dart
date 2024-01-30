@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'board_list_page.dart';
 import 'slide_right_route.dart';
+import 'category.dart';
 
 void main() => runApp(const MyApp());
 
@@ -26,7 +27,7 @@ class JsonFetchPage extends StatefulWidget {
 }
 
 class JsonFetchPageState extends State<JsonFetchPage> {
-  List<String> _categoryNames = [];
+  List<Category> _categories = [];
 
   @override
   void initState() {
@@ -42,11 +43,11 @@ class JsonFetchPageState extends State<JsonFetchPage> {
       final List<dynamic> menuList = jsonData['menu_list'];
 
       setState(() {
-        _categoryNames = menuList.map((item) => item['category_name'].toString()).toList();
+        _categories = menuList.map<Category>((item) => Category.fromJson(item)).toList();
       });
     } else {
       setState(() {
-        _categoryNames = ['Failed to load data'];
+        _categories = [];
       });
     }
   }
@@ -73,18 +74,23 @@ class JsonFetchPageState extends State<JsonFetchPage> {
           mainAxisSpacing: 0.0, // 縦方向の間隔（行間）を小さくする
           childAspectRatio: 6, // アイテムの縦横比を調整
         ),
-        itemCount: _categoryNames.length,
+        itemCount: _categories.length,
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              Navigator.push(context, SlideRightRoute(page: BoardListPage(categoryName: _categoryNames[index])));
+              Navigator.push(
+                  context,
+                  SlideRightRoute(
+                      page: BoardListPage(category: _categories[index])
+                  )
+              );
             },
             child: Container(
               decoration: BoxDecoration(
                 border: _determineBorder(index),
               ),
               alignment: Alignment.center,
-              child: Text(_categoryNames[index]),
+              child: Text(_categories[index].categoryName),
             ),
           );
         },
