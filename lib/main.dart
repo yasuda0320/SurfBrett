@@ -65,7 +65,7 @@ class JsonFetchPageState extends State<JsonFetchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Category Names with Grid Lines'),
+        title: const Text('5ch.net'),
       ),
       body: GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
