@@ -54,15 +54,6 @@ class JsonFetchPageState extends State<JsonFetchPage> {
     }
   }
 
-  Border _determineBorder(int index) {
-    bool isFirstRow = index < 2; // 2列なので、インデックスが0または1の場合は最初の行
-    return Border(
-      top: isFirstRow ? const BorderSide(color: Colors.grey) : BorderSide.none,
-      right: (index % 2 == 0) ? const BorderSide(color: Colors.grey) : BorderSide.none,
-      bottom: const BorderSide(color: Colors.grey),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

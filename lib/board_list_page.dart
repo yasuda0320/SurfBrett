@@ -9,15 +9,6 @@ class BoardListPage extends StatelessWidget {
 
   const BoardListPage({Key? key, required this.category}) : super(key: key);
 
-  Border _determineBorder(int index) {
-    bool isFirstRow = index < 2; // Assuming 2 columns
-    return Border(
-      top: isFirstRow ? const BorderSide(color: Colors.grey) : BorderSide.none,
-      right: (index % 2 == 0) ? const BorderSide(color: Colors.grey) : BorderSide.none,
-      bottom: const BorderSide(color: Colors.grey),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     double startHorizontalDrag = 0.0;
