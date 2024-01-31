@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'category.dart';
+import 'shared_functions.dart';
+import 'common.dart';
 
 class BoardListPage extends StatelessWidget {
   final Category category;
@@ -39,17 +41,12 @@ class BoardListPage extends StatelessWidget {
           title: Text(category.categoryName),
         ),
         body: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, // 2列で表示
-            crossAxisSpacing: 0.0, // 横方向の間隔
-            mainAxisSpacing: 0.0, // 縦方向の間隔（行間）を小さくする
-            childAspectRatio: 6, // アイテムの縦横比を調整
-          ),
+          gridDelegate: CommonConfig.gridDelegate,
           itemCount: category.boards.length,
           itemBuilder: (context, index) {
             return Container(
               decoration: BoxDecoration(
-                border: _determineBorder(index),
+                border: determineBorder(index, 2), // Assuming 2 columns here
               ),
               alignment: Alignment.center,
               child: Text(category.boards[index].boardName),
