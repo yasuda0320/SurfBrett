@@ -7,6 +7,15 @@ class BoardListPage extends StatelessWidget {
 
   const BoardListPage({Key? key, required this.category}) : super(key: key);
 
+  Border _determineBorder(int index) {
+    bool isFirstRow = index < 2; // Assuming 2 columns
+    return Border(
+      top: isFirstRow ? const BorderSide(color: Colors.grey) : BorderSide.none,
+      right: (index % 2 == 0) ? const BorderSide(color: Colors.grey) : BorderSide.none,
+      bottom: const BorderSide(color: Colors.grey),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double startHorizontalDrag = 0.0;
@@ -29,11 +38,21 @@ class BoardListPage extends StatelessWidget {
         appBar: AppBar(
           title: Text(category.categoryName),
         ),
-        body: ListView.builder(
+        body: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2, // 2列で表示
+            crossAxisSpacing: 0.0, // 横方向の間隔
+            mainAxisSpacing: 0.0, // 縦方向の間隔（行間）を小さくする
+            childAspectRatio: 6, // アイテムの縦横比を調整
+          ),
           itemCount: category.boards.length,
           itemBuilder: (context, index) {
-            return ListTile(
-              title: Text(category.boards[index].boardName),
+            return Container(
+              decoration: BoxDecoration(
+                border: _determineBorder(index),
+              ),
+              alignment: Alignment.center,
+              child: Text(category.boards[index].boardName),
             );
           },
         ),
