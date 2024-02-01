@@ -22,7 +22,7 @@ class ThreadListPageState extends State<ThreadListPage> with HorizontalDragMixin
   }
 
   Future<String> _fetchHtmlContent() async {
-    final response = await http.get(Uri.parse(widget.url));
+    final response = await http.get(Uri.parse('${widget.url}subback.html'));
     if (response.statusCode == 200) {
       String? charset = response.headers['content-type']?.split('charset=')[1];
       charset ??= 'UTF-8';
