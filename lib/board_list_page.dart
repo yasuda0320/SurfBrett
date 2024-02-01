@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'category.dart';
 import 'shared_functions.dart';
 import 'common.dart';
+import 'slide_right_route.dart';
+import 'thread_list_page.dart';
 
 class BoardListPage extends StatelessWidget {
   final Category category;
@@ -35,12 +37,22 @@ class BoardListPage extends StatelessWidget {
           gridDelegate: CommonConfig.gridDelegate,
           itemCount: category.boards.length,
           itemBuilder: (context, index) {
-            return Container(
-              decoration: BoxDecoration(
-                border: determineBorder(index, 2), // Assuming 2 columns here
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    SlideRightRoute(
+                        page: ThreadListPage(url: category.boards[index].url)
+                    )
+                );
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  border: determineBorder(index, 2), // Assuming 2 columns here
+                ),
+                alignment: Alignment.center,
+                child: Text(category.boards[index].boardName),
               ),
-              alignment: Alignment.center,
-              child: Text(category.boards[index].boardName),
             );
           },
         ),
