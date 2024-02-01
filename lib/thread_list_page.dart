@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:charset_converter/charset_converter.dart';
+import 'horizontal_drag_mixin.dart'; // Import the mixin
 
 class ThreadListPage extends StatefulWidget {
   final String url;
@@ -8,10 +9,10 @@ class ThreadListPage extends StatefulWidget {
   const ThreadListPage({Key? key, required this.url}) : super(key: key);
 
   @override
-  _ThreadListPageState createState() => _ThreadListPageState();
+  ThreadListPageState createState() => ThreadListPageState();
 }
 
-class _ThreadListPageState extends State<ThreadListPage> {
+class ThreadListPageState extends State<ThreadListPage> with HorizontalDragMixin {
   late Future<String> _htmlContent;
 
   @override
@@ -23,11 +24,8 @@ class _ThreadListPageState extends State<ThreadListPage> {
   Future<String> _fetchHtmlContent() async {
     final response = await http.get(Uri.parse(widget.url));
     if (response.statusCode == 200) {
-      // Content-Typeヘッダーからcharsetを抽出
       String? charset = response.headers['content-type']?.split('charset=')[1];
-      charset ??= 'UTF-8'; // デフォルトをUTF-8とする
-
-      // charset_converterを使用して適切なエンコーディングでデコード
+      charset ??= 'UTF-8';
       final decodedBody = await CharsetConverter.decode(charset, response.bodyBytes);
       return decodedBody;
     } else {
@@ -37,24 +35,29 @@ class _ThreadListPageState extends State<ThreadListPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Thread List'),
-      ),
-      body: FutureBuilder<String>(
-        future: _htmlContent,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
+    return GestureDetector(
+      onHorizontalDragStart: handleHorizontalDragStart,
+      onHorizontalDragUpdate: handleHorizontalDragUpdate,
+      onHorizontalDragEnd: (details) => handleHorizontalDragEnd(details, context),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Thread List'),
+        ),
+        body: FutureBuilder<String>(
+          future: _htmlContent,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              }
+              return SingleChildScrollView(
+                child: Text(snapshot.data ?? 'No data'),
+              );
+            } else {
+              return const CircularProgressIndicator();
             }
-            return SingleChildScrollView(
-              child: Text(snapshot.data ?? 'No data'),
-            );
-          } else {
-            return const CircularProgressIndicator();
-          }
-        },
+          },
+        ),
       ),
     );
   }

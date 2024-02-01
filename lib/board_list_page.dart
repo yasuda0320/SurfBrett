@@ -4,45 +4,38 @@ import 'shared_functions.dart';
 import 'common.dart';
 import 'slide_right_route.dart';
 import 'thread_list_page.dart';
+import 'horizontal_drag_mixin.dart'; // Import the mixin
 
-class BoardListPage extends StatelessWidget {
+class BoardListPage extends StatefulWidget {
   final Category category;
-  final double _minimumDragDistance = 100; // 最小のフリック距離を設定
 
   const BoardListPage({Key? key, required this.category}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    double startHorizontalDrag = 0.0;
-    double endHorizontalDrag = 0.0;
+  BoardListPageState createState() => BoardListPageState();
+}
 
+class BoardListPageState extends State<BoardListPage> with HorizontalDragMixin {
+  @override
+  Widget build(BuildContext context) {
     return GestureDetector(
-      onHorizontalDragStart: (details) {
-        startHorizontalDrag = details.globalPosition.dx;
-      },
-      onHorizontalDragUpdate: (details) {
-        endHorizontalDrag = details.globalPosition.dx;
-      },
-      onHorizontalDragEnd: (details) {
-        if (endHorizontalDrag - startHorizontalDrag > _minimumDragDistance) {
-          // 左から右へのフリックを検出（最小フリック距離を超えているか確認）
-          Navigator.pop(context);
-        }
-      },
+      onHorizontalDragStart: handleHorizontalDragStart,
+      onHorizontalDragUpdate: handleHorizontalDragUpdate,
+      onHorizontalDragEnd: (details) => handleHorizontalDragEnd(details, context),
       child: Scaffold(
         appBar: AppBar(
-          title: Text(category.categoryName),
+          title: Text(widget.category.categoryName),
         ),
         body: GridView.builder(
           gridDelegate: CommonConfig.gridDelegate,
-          itemCount: category.boards.length,
+          itemCount: widget.category.boards.length,
           itemBuilder: (context, index) {
             return GestureDetector(
               onTap: () {
                 Navigator.push(
                     context,
                     SlideRightRoute(
-                        page: ThreadListPage(url: category.boards[index].url)
+                        page: ThreadListPage(url: widget.category.boards[index].url)
                     )
                 );
               },
@@ -51,7 +44,7 @@ class BoardListPage extends StatelessWidget {
                   border: determineBorder(index, 2), // Assuming 2 columns here
                 ),
                 alignment: Alignment.center,
-                child: Text(category.boards[index].boardName),
+                child: Text(widget.category.boards[index].boardName),
               ),
             );
           },
