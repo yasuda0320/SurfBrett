@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:charset_converter/charset_converter.dart';
 import 'horizontal_drag_mixin.dart'; // Import the mixin
 import 'common.dart';
+import 'dart:io';
 
 class ThreadListPage extends StatefulWidget {
   final String url;
@@ -24,13 +25,21 @@ class ThreadListPageState extends State<ThreadListPage> with HorizontalDragMixin
 
   Future<String> _fetchHtmlContent() async {
     final response = await http.get(Uri.parse('${widget.url}${Common.subbackPath}'));
-    if (response.statusCode == 200) {
-      String? charset = response.headers['content-type']?.split('charset=')[1];
-      charset ??= 'UTF-8';
+    if (response.statusCode != HttpStatus.ok) {
+      return 'HTMLの取得に失敗しました';
+    }
+
+    String? charset = response.headers['content-type']?.split('charset=')[1];
+    charset ??= Common.defaultCharset;
+    if (charset == Common.shiftJisCharset) {
+      charset = Common.windowsCharset;
+    }
+
+    try {
       final decodedBody = await CharsetConverter.decode(charset, response.bodyBytes);
       return decodedBody;
-    } else {
-      throw Exception('Failed to load HTML content');
+    } catch (e) {
+      return 'デコード中にエラーが発生しました: $e';
     }
   }
 

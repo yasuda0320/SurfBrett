@@ -41,7 +41,7 @@ class BoardListPageState extends State<BoardListPage> with HorizontalDragMixin {
               },
               child: Container(
                 decoration: BoxDecoration(
-                  border: determineBorder(index, 2), // Assuming 2 columns here
+                  border: determineBorder(index, Common.boardListColumn),
                 ),
                 alignment: Alignment.center,
                 child: Text(widget.category.boards[index].boardName),

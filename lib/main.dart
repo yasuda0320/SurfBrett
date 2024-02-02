@@ -6,6 +6,7 @@ import 'slide_right_route.dart';
 import 'category.dart';
 import 'shared_functions.dart';
 import 'common.dart';
+import 'dart:io';
 
 void main() => runApp(const MyApp());
 
@@ -40,7 +41,7 @@ class JsonFetchPageState extends State<JsonFetchPage> {
   Future<void> _fetchData() async {
     final response = await http.get(Uri.parse(Common.bbsmenuUrl));
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == HttpStatus.ok) {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
       final List<dynamic> menuList = jsonData['menu_list'];
 
@@ -58,7 +59,7 @@ class JsonFetchPageState extends State<JsonFetchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('5ch.net'),
+        title: const Text(Common.bbsTitle),
       ),
       body: GridView.builder(
         gridDelegate: Common.gridDelegate,
@@ -75,7 +76,7 @@ class JsonFetchPageState extends State<JsonFetchPage> {
             },
             child: Container(
               decoration: BoxDecoration(
-                border: determineBorder(index, 2), // Assuming 2 columns here
+                border: determineBorder(index, Common.categoryListColumn),
               ),
               alignment: Alignment.center,
               child: Text(_categories[index].categoryName),
