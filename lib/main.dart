@@ -38,7 +38,7 @@ class JsonFetchPageState extends State<JsonFetchPage> {
   }
 
   Future<void> _fetchData() async {
-    final response = await http.get(Uri.parse('https://menu.5ch.net/bbsmenu.json'));
+    final response = await http.get(Uri.parse(Common.bbsmenuUrl));
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
@@ -61,7 +61,7 @@ class JsonFetchPageState extends State<JsonFetchPage> {
         title: const Text('5ch.net'),
       ),
       body: GridView.builder(
-        gridDelegate: CommonConfig.gridDelegate,
+        gridDelegate: Common.gridDelegate,
         itemCount: _categories.length,
         itemBuilder: (context, index) {
           return GestureDetector(

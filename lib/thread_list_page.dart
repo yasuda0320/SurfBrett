@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:charset_converter/charset_converter.dart';
 import 'horizontal_drag_mixin.dart'; // Import the mixin
+import 'common.dart';
 
 class ThreadListPage extends StatefulWidget {
   final String url;
@@ -22,7 +23,7 @@ class ThreadListPageState extends State<ThreadListPage> with HorizontalDragMixin
   }
 
   Future<String> _fetchHtmlContent() async {
-    final response = await http.get(Uri.parse('${widget.url}subback.html'));
+    final response = await http.get(Uri.parse('${widget.url}${Common.subbackPath}'));
     if (response.statusCode == 200) {
       String? charset = response.headers['content-type']?.split('charset=')[1];
       charset ??= 'UTF-8';

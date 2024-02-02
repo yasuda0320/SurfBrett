@@ -27,7 +27,7 @@ class BoardListPageState extends State<BoardListPage> with HorizontalDragMixin {
           title: Text(widget.category.categoryName),
         ),
         body: GridView.builder(
-          gridDelegate: CommonConfig.gridDelegate,
+          gridDelegate: Common.gridDelegate,
           itemCount: widget.category.boards.length,
           itemBuilder: (context, index) {
             return GestureDetector(
