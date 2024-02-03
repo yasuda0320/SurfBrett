@@ -1,32 +1,39 @@
 import 'dart:io';
 import 'package:charset_converter/charset_converter.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:html/parser.dart' as html_parser;
+import 'package:html/dom.dart' as dom;
 import 'horizontal_drag_mixin.dart';
 import 'common.dart';
+import 'bbs_category.dart';
 
 class ThreadListPage extends StatefulWidget {
-  final String url;
+  final Board board;
 
-  const ThreadListPage({Key? key, required this.url}) : super(key: key);
+  const ThreadListPage({Key? key, required this.board}) : super(key: key);
 
   @override
   ThreadListPageState createState() => ThreadListPageState();
 }
 
 class ThreadListPageState extends State<ThreadListPage> with HorizontalDragMixin {
-  late Future<String> _htmlContent;
+  late Future<List<String>> _threadTitles;
 
   @override
   void initState() {
     super.initState();
-    _htmlContent = _fetchHtmlContent();
+    _threadTitles = _fetchThreadTitles();
   }
 
-  Future<String> _fetchHtmlContent() async {
-    final response = await http.get(Uri.parse('${widget.url}${Common.subbackPath}'));
+  Future<List<String>> _fetchThreadTitles() async {
+    final response = await http.get(Uri.parse('${widget.board.url}${Common.subbackPath}'));
     if (response.statusCode != HttpStatus.ok) {
-      return 'HTMLの取得に失敗しました';
+      if (kDebugMode) {
+        print('HTMLの取得に失敗しました');
+      }
+      return [];
     }
 
     String charset = response.headers['content-type']?.split('charset=')[1] ?? Common.defaultCharset;
@@ -34,41 +41,53 @@ class ThreadListPageState extends State<ThreadListPage> with HorizontalDragMixin
 
     try {
       final decodedBody = await CharsetConverter.decode(charset, response.bodyBytes);
-      return decodedBody;
+      var document = html_parser.parse(decodedBody);
+      List<dom.Element> links = document.querySelectorAll('small#trad > a');
+      List<String> titles = links.map((link) => link.text).toList();
+      return titles.reversed.toList();
     } catch (e) {
-      return 'デコード中にエラーが発生しました。詳細: $e';
+      if (kDebugMode) {
+        print('デコード中にエラーが発生しました。詳細: $e');
+      }
+      return [];
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onHorizontalDragStart: handleHorizontalDragStart,
-      onHorizontalDragUpdate: handleHorizontalDragUpdate,
-      onHorizontalDragEnd: (details) => handleHorizontalDragEnd(details, context),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Thread List'),
-        ),
-        body: FutureBuilder<String>(
-          future: _htmlContent,
-          builder: _buildHtmlContent,
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.board.boardName),
+      ),
+      body: FutureBuilder<List<String>>(
+        future: _threadTitles,
+        builder: _buildContent,
       ),
     );
   }
 
-  Widget _buildHtmlContent(BuildContext context, AsyncSnapshot<String> snapshot) {
-    if (snapshot.connectionState == ConnectionState.done) {
-      return snapshot.hasError
-          ? Text('エラーが発生しました。詳細: ${snapshot.error}')
-          : _buildHtmlScrollView(snapshot.data ?? 'データがありません。');
-    } else {
-      return const CircularProgressIndicator();
+  Widget _buildContent(BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+    if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+      return ListView.builder(
+        itemCount: snapshot.data!.length,
+        itemBuilder: (context, index) {
+          return Container(
+            decoration: const BoxDecoration(
+              border: Border(bottom: BorderSide(color: Colors.grey)),
+            ),
+            child: ListTile(
+              title: Text(
+                snapshot.data![index],
+                softWrap: true,
+                overflow: TextOverflow.visible,
+              ),
+            ),
+          );
+        },
+      );
+    } else if (snapshot.hasError) {
+      return Text('Error: ${snapshot.error}');
     }
-  }
-
-  Widget _buildHtmlScrollView(String data) {
-    return SingleChildScrollView(child: Text(data));
+    return const CircularProgressIndicator();
   }
 }

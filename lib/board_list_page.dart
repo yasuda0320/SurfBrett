@@ -56,7 +56,7 @@ class BoardListPageState extends State<BoardListPage> with HorizontalDragMixin {
     Navigator.push(
       context,
       SlideRightRoute(
-        page: ThreadListPage(url: widget.category.boards[index].url),
+        page: ThreadListPage(board: widget.category.boards[index]),
       ),
     );
   }
