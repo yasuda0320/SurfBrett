@@ -51,3 +51,10 @@ class Board {
     );
   }
 }
+
+class ThreadInfo {
+  final String title;
+  final String url;
+
+  ThreadInfo({required this.title, required this.url});
+}

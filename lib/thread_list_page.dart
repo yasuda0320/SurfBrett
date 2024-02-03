@@ -19,15 +19,15 @@ class ThreadListPage extends StatefulWidget {
 }
 
 class ThreadListPageState extends State<ThreadListPage> with HorizontalDragMixin {
-  late Future<List<String>> _threadTitles;
+  late Future<List<ThreadInfo>> _threadInfoList;
 
   @override
   void initState() {
     super.initState();
-    _threadTitles = _fetchThreadTitles();
+    _threadInfoList = _fetchThreadTitles();
   }
 
-  Future<List<String>> _fetchThreadTitles() async {
+  Future<List<ThreadInfo>> _fetchThreadTitles() async {
     final response = await http.get(Uri.parse('${widget.board.url}${Common.subbackPath}'));
     if (response.statusCode != HttpStatus.ok) {
       if (kDebugMode) {
@@ -43,8 +43,12 @@ class ThreadListPageState extends State<ThreadListPage> with HorizontalDragMixin
       final decodedBody = await CharsetConverter.decode(charset, response.bodyBytes);
       var document = html_parser.parse(decodedBody);
       List<dom.Element> links = document.querySelectorAll(Common.threadListSelector);
-      List<String> titles = links.map((link) => link.text).toList();
-      return titles.reversed.toList();
+      List<ThreadInfo> threadInfoList = links.map((link) {
+        final title = link.text;
+        final url = link.attributes['href'] ?? ''; // hrefがない場合は空文字列を使用
+        return ThreadInfo(title: title, url: url);
+      }).toList();
+      return threadInfoList.reversed.toList();
     } catch (e) {
       if (kDebugMode) {
         print('デコード中にエラーが発生しました。詳細: $e');
@@ -63,15 +67,15 @@ class ThreadListPageState extends State<ThreadListPage> with HorizontalDragMixin
         onHorizontalDragStart: handleHorizontalDragStart,
         onHorizontalDragUpdate: handleHorizontalDragUpdate,
         onHorizontalDragEnd: (details) => handleHorizontalDragEnd(details, context),
-        child: FutureBuilder<List<String>>(
-          future: _threadTitles,
+        child: FutureBuilder<List<ThreadInfo>>(
+          future: _threadInfoList,
           builder: _buildContent,
         ),
       ),
     );
   }
 
-  Widget _buildContent(BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+  Widget _buildContent(BuildContext context, AsyncSnapshot<List<ThreadInfo>> snapshot) {
     if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
       return ListView.builder(
         itemCount: snapshot.data!.length,
@@ -83,15 +87,15 @@ class ThreadListPageState extends State<ThreadListPage> with HorizontalDragMixin
     return const CircularProgressIndicator();
   }
 
-  Widget _buildListItem(BuildContext context, int index, List<String> data) {
-    // _buildItemDecorationメソッドを呼び出して、適切なBoxDecorationを取得
+  Widget _buildListItem(BuildContext context, int index, List<ThreadInfo> data) {
+    final threadInfo = data[index];
     BoxDecoration decoration = _buildItemDecoration(index);
 
     return Container(
       decoration: decoration,
       child: ListTile(
         title: Text(
-          data[index],
+          threadInfo.title,
           softWrap: true,
           overflow: TextOverflow.visible,
         ),
