@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'category.dart';
+import 'bbs_category.dart';
 import 'shared_functions.dart';
 import 'common.dart';
 import 'slide_right_route.dart';
@@ -7,7 +7,7 @@ import 'thread_list_page.dart';
 import 'horizontal_drag_mixin.dart'; // Import the mixin
 
 class BoardListPage extends StatefulWidget {
-  final Category category;
+  final BbsCategory category;
 
   const BoardListPage({Key? key, required this.category}) : super(key: key);
 

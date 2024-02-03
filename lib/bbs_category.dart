@@ -1,20 +1,20 @@
-class Category {
+class BbsCategory {
   final String categoryNumber;
   final List<Board> boards;
   final int categoryTotal;
   final String categoryName;
 
-  Category({
+  BbsCategory({
     required this.categoryNumber,
     required this.boards,
     required this.categoryTotal,
     required this.categoryName,
   });
 
-  factory Category.fromJson(Map<String, dynamic> json) {
+  factory BbsCategory.fromJson(Map<String, dynamic> json) {
     var list = json['category_content'] as List;
     List<Board> boardList = list.map((i) => Board.fromJson(i)).toList();
-    return Category(
+    return BbsCategory(
       categoryNumber: json['category_number'],
       boards: boardList,
       categoryTotal: json['category_total'],

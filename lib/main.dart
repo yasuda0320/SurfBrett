@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'board_list_page.dart';
-import 'category.dart';
+import 'bbs_category.dart';
 import 'common.dart';
 import 'shared_functions.dart';
 import 'slide_right_route.dart';
@@ -30,7 +30,7 @@ class JsonFetchPage extends StatefulWidget {
 }
 
 class JsonFetchPageState extends State<JsonFetchPage> {
-  List<Category> _categories = [];
+  List<BbsCategory> _categories = [];
 
   @override
   void initState() {
@@ -46,7 +46,7 @@ class JsonFetchPageState extends State<JsonFetchPage> {
         final List<dynamic> menuList = jsonData['menu_list'];
 
         setState(() {
-          _categories = menuList.map<Category>((item) => Category.fromJson(item)).toList();
+          _categories = menuList.map<BbsCategory>((item) => BbsCategory.fromJson(item)).toList();
         });
       } else {
         // エラーステータスコードが返された場合の処理
