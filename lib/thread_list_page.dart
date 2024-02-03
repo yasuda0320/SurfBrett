@@ -42,7 +42,7 @@ class ThreadListPageState extends State<ThreadListPage> with HorizontalDragMixin
     try {
       final decodedBody = await CharsetConverter.decode(charset, response.bodyBytes);
       var document = html_parser.parse(decodedBody);
-      List<dom.Element> links = document.querySelectorAll('small#trad > a');
+      List<dom.Element> links = document.querySelectorAll(Common.threadListSelector);
       List<String> titles = links.map((link) => link.text).toList();
       return titles.reversed.toList();
     } catch (e) {

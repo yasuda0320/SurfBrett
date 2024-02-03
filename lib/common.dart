@@ -15,4 +15,5 @@ class Common {
   static const defaultCharset = 'UTF-8';
   static const shiftJisCharset = 'Shift_JIS';
   static const windowsCharset = 'windows-31j';
+  static const threadListSelector = 'small#trad > a';
 }
