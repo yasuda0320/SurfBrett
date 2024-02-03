@@ -18,15 +18,15 @@ class BoardListPage extends StatefulWidget {
 class BoardListPageState extends State<BoardListPage> with HorizontalDragMixin {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onHorizontalDragStart: handleHorizontalDragStart,
-      onHorizontalDragUpdate: handleHorizontalDragUpdate,
-      onHorizontalDragEnd: (details) => handleHorizontalDragEnd(details, context),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(widget.category.categoryName),
-        ),
-        body: GridView.builder(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.category.categoryName),
+      ),
+      body: GestureDetector(
+        onHorizontalDragStart: handleHorizontalDragStart,
+        onHorizontalDragUpdate: handleHorizontalDragUpdate,
+        onHorizontalDragEnd: (details) => handleHorizontalDragEnd(details, context),
+        child: GridView.builder(
           gridDelegate: Common.gridDelegate,
           itemCount: widget.category.boards.length,
           itemBuilder: _buildBoardItem,
