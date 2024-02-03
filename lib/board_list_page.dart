@@ -4,7 +4,7 @@ import 'shared_functions.dart';
 import 'common.dart';
 import 'slide_right_route.dart';
 import 'thread_list_page.dart';
-import 'horizontal_drag_mixin.dart'; // Import the mixin
+import 'horizontal_drag_mixin.dart';
 
 class BoardListPage extends StatefulWidget {
   final BbsCategory category;
@@ -29,26 +29,34 @@ class BoardListPageState extends State<BoardListPage> with HorizontalDragMixin {
         body: GridView.builder(
           gridDelegate: Common.gridDelegate,
           itemCount: widget.category.boards.length,
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    SlideRightRoute(
-                        page: ThreadListPage(url: widget.category.boards[index].url)
-                    )
-                );
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  border: determineBorder(index, Common.boardListColumn),
-                ),
-                alignment: Alignment.center,
-                child: Text(widget.category.boards[index].boardName),
-              ),
-            );
-          },
+          itemBuilder: _buildBoardItem,
         ),
+      ),
+    );
+  }
+
+  Widget _buildBoardItem(BuildContext context, int index) {
+    return GestureDetector(
+      onTap: () => _navigateToThreadListPage(context, index),
+      child: _buildBoardContainer(index),
+    );
+  }
+
+  Widget _buildBoardContainer(int index) {
+    return Container(
+      decoration: BoxDecoration(
+        border: determineBorder(index, Common.boardListColumn),
+      ),
+      alignment: Alignment.center,
+      child: Text(widget.category.boards[index].boardName),
+    );
+  }
+
+  void _navigateToThreadListPage(BuildContext context, int index) {
+    Navigator.push(
+      context,
+      SlideRightRoute(
+        page: ThreadListPage(url: widget.category.boards[index].url),
       ),
     );
   }
