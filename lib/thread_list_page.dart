@@ -75,24 +75,46 @@ class ThreadListPageState extends State<ThreadListPage> with HorizontalDragMixin
     if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
       return ListView.builder(
         itemCount: snapshot.data!.length,
-        itemBuilder: (context, index) {
-          return Container(
-            decoration: const BoxDecoration(
-              border: Border(bottom: BorderSide(color: Colors.grey)),
-            ),
-            child: ListTile(
-              title: Text(
-                snapshot.data![index],
-                softWrap: true,
-                overflow: TextOverflow.visible,
-              ),
-            ),
-          );
-        },
+        itemBuilder: (context, index) => _buildListItem(context, index, snapshot.data!),
       );
     } else if (snapshot.hasError) {
       return Text('Error: ${snapshot.error}');
     }
     return const CircularProgressIndicator();
+  }
+
+  Widget _buildListItem(BuildContext context, int index, List<String> data) {
+    // _buildItemDecorationメソッドを呼び出して、適切なBoxDecorationを取得
+    BoxDecoration decoration = _buildItemDecoration(index);
+
+    return Container(
+      decoration: decoration,
+      child: ListTile(
+        title: Text(
+          data[index],
+          softWrap: true,
+          overflow: TextOverflow.visible,
+        ),
+      ),
+    );
+  }
+
+  BoxDecoration _buildItemDecoration(int index) {
+    if (index == 0) {
+      // 最初のアイテムのため上側と下側にグリッド線を追加
+      return const BoxDecoration(
+        border: Border(
+          top: BorderSide(color: Colors.grey),
+          bottom: BorderSide(color: Colors.grey),
+        ),
+      );
+    } else {
+      // 下側にのみグリッド線を追加
+      return const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Colors.grey),
+        ),
+      );
+    }
   }
 }
