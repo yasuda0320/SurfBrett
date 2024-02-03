@@ -59,9 +59,14 @@ class ThreadListPageState extends State<ThreadListPage> with HorizontalDragMixin
       appBar: AppBar(
         title: Text(widget.board.boardName),
       ),
-      body: FutureBuilder<List<String>>(
-        future: _threadTitles,
-        builder: _buildContent,
+      body: GestureDetector(
+        onHorizontalDragStart: handleHorizontalDragStart,
+        onHorizontalDragUpdate: handleHorizontalDragUpdate,
+        onHorizontalDragEnd: (details) => handleHorizontalDragEnd(details, context),
+        child: FutureBuilder<List<String>>(
+          future: _threadTitles,
+          builder: _buildContent,
+        ),
       ),
     );
   }
