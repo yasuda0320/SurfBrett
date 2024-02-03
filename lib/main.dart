@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'board_list_page.dart';
-import 'slide_right_route.dart';
 import 'category.dart';
-import 'shared_functions.dart';
 import 'common.dart';
-import 'dart:io';
+import 'shared_functions.dart';
+import 'slide_right_route.dart';
 
 void main() => runApp(const MyApp());
 
@@ -39,16 +39,25 @@ class JsonFetchPageState extends State<JsonFetchPage> {
   }
 
   Future<void> _fetchData() async {
-    final response = await http.get(Uri.parse(Common.bbsmenuUrl));
+    try {
+      final response = await http.get(Uri.parse(Common.bbsmenuUrl));
+      if (response.statusCode == HttpStatus.ok) {
+        final jsonData = json.decode(utf8.decode(response.bodyBytes));
+        final List<dynamic> menuList = jsonData['menu_list'];
 
-    if (response.statusCode == HttpStatus.ok) {
-      final jsonData = json.decode(utf8.decode(response.bodyBytes));
-      final List<dynamic> menuList = jsonData['menu_list'];
-
-      setState(() {
-        _categories = menuList.map<Category>((item) => Category.fromJson(item)).toList();
-      });
-    } else {
+        setState(() {
+          _categories = menuList.map<Category>((item) => Category.fromJson(item)).toList();
+        });
+      } else {
+        // エラーステータスコードが返された場合の処理
+        print('Error fetching data: ${response.statusCode}');
+        setState(() {
+          _categories = [];
+        });
+      }
+    } catch (e) {
+      // ネットワークエラーやJSONのデコードエラーの捕捉
+      print('Exception caught fetching data: $e');
       setState(() {
         _categories = [];
       });
@@ -64,25 +73,24 @@ class JsonFetchPageState extends State<JsonFetchPage> {
       body: GridView.builder(
         gridDelegate: Common.gridDelegate,
         itemCount: _categories.length,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  SlideRightRoute(
-                      page: BoardListPage(category: _categories[index])
-                  )
-              );
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                border: determineBorder(index, Common.categoryListColumn),
-              ),
-              alignment: Alignment.center,
-              child: Text(_categories[index].categoryName),
-            ),
-          );
-        },
+        itemBuilder: _buildCategoryItem,
+      ),
+    );
+  }
+
+  Widget _buildCategoryItem(BuildContext context, int index) {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        SlideRightRoute(
+            page: BoardListPage(category: _categories[index])),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          border: determineBorder(index, Common.categoryListColumn),
+        ),
+        alignment: Alignment.center,
+        child: Text(_categories[index].categoryName),
       ),
     );
   }
