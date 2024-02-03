@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'board_list_page.dart';
@@ -50,14 +51,18 @@ class JsonFetchPageState extends State<JsonFetchPage> {
         });
       } else {
         // エラーステータスコードが返された場合の処理
-        print('Error fetching data: ${response.statusCode}');
+        if (kDebugMode) {
+          print('Error fetching data: ${response.statusCode}');
+        }
         setState(() {
           _categories = [];
         });
       }
     } catch (e) {
       // ネットワークエラーやJSONのデコードエラーの捕捉
-      print('Exception caught fetching data: $e');
+      if (kDebugMode) {
+        print('Exception caught fetching data: $e');
+      }
       setState(() {
         _categories = [];
       });
