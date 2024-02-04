@@ -40,26 +40,30 @@ class ResponseListPageState
         ),
         body: FutureBuilder<List<BbsResponse>>(
           future: _responses,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasData) {
-                return ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index) {
-                    final response = snapshot.data![index];
-                    return ListTile(
-                      title: Text(response.content),
-                    );
-                  },
-                );
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              }
-            }
-            return const CircularProgressIndicator();
-          },
+          builder: _buildContent,
         ),
       ),
+    );
+  }
+
+  Widget _buildContent(BuildContext context, AsyncSnapshot<List<BbsResponse>> snapshot) {
+    if (snapshot.connectionState == ConnectionState.done) {
+      if (snapshot.hasData) {
+        return ListView.builder(
+          itemCount: snapshot.data!.length,
+          itemBuilder: (context, index) => _buildListItem(context, index, snapshot.data!),
+        );
+      } else if (snapshot.hasError) {
+        return Text('Error: ${snapshot.error}');
+      }
+    }
+    return const CircularProgressIndicator();
+  }
+
+  Widget _buildListItem(BuildContext context, int index, List<BbsResponse> data) {
+    final response = data[index];
+    return ListTile(
+      title: Text(response.content),
     );
   }
 }
