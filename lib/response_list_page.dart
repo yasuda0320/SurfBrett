@@ -94,8 +94,13 @@ class ResponseListPageState
 
   Widget _buildListItem(BuildContext context, int index, List<BbsResponse> data) {
     final response = data[index];
-    return ListTile(
-      title: Text(response.content),
+    return Column(
+      children: <Widget>[
+        ListTile(
+          title: Text(response.content),
+        ),
+        Divider(), // レス間にグリッド線を追加
+      ],
     );
   }
 }
