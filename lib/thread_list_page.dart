@@ -7,10 +7,11 @@ import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as dom;
 import 'horizontal_drag_mixin.dart';
 import 'common.dart';
-import 'bbs_category.dart';
+import 'bbs_data_class.dart';
+import 'response_list_page.dart';
 
 class ThreadListPage extends StatefulWidget {
-  final Board board;
+  final BbsBoard board;
 
   const ThreadListPage({Key? key, required this.board}) : super(key: key);
 
@@ -18,8 +19,9 @@ class ThreadListPage extends StatefulWidget {
   ThreadListPageState createState() => ThreadListPageState();
 }
 
-class ThreadListPageState extends State<ThreadListPage> with HorizontalDragMixin {
-  late Future<List<ThreadInfo>> _threadInfoList;
+class ThreadListPageState
+    extends State<ThreadListPage> with HorizontalDragMixin {
+  late Future<List<BbsThreadInfo>> _threadInfoList;
 
   @override
   void initState() {
@@ -27,7 +29,7 @@ class ThreadListPageState extends State<ThreadListPage> with HorizontalDragMixin
     _threadInfoList = _fetchThreadTitles();
   }
 
-  Future<List<ThreadInfo>> _fetchThreadTitles() async {
+  Future<List<BbsThreadInfo>> _fetchThreadTitles() async {
     final response = await http.get(Uri.parse('${widget.board.url}${Common.subbackPath}'));
     if (response.statusCode != HttpStatus.ok) {
       if (kDebugMode) {
@@ -43,12 +45,12 @@ class ThreadListPageState extends State<ThreadListPage> with HorizontalDragMixin
       final decodedBody = await CharsetConverter.decode(charset, response.bodyBytes);
       var document = html_parser.parse(decodedBody);
       List<dom.Element> links = document.querySelectorAll(Common.threadListSelector);
-      List<ThreadInfo> threadInfoList = links.map((link) {
+      List<BbsThreadInfo> threadInfoList = links.map((link) {
         final title = link.text;
         final url = link.attributes['href'] ?? ''; // hrefがない場合は空文字列を使用
-        return ThreadInfo(title: title, url: url);
+        return BbsThreadInfo(title: title, url: url);
       }).toList();
-      return threadInfoList.reversed.toList();
+      return threadInfoList; //.reversed.toList();
     } catch (e) {
       if (kDebugMode) {
         print('デコード中にエラーが発生しました。詳細: $e');
@@ -67,7 +69,7 @@ class ThreadListPageState extends State<ThreadListPage> with HorizontalDragMixin
         onHorizontalDragStart: handleHorizontalDragStart,
         onHorizontalDragUpdate: handleHorizontalDragUpdate,
         onHorizontalDragEnd: (details) => handleHorizontalDragEnd(details, context),
-        child: FutureBuilder<List<ThreadInfo>>(
+        child: FutureBuilder<List<BbsThreadInfo>>(
           future: _threadInfoList,
           builder: _buildContent,
         ),
@@ -75,7 +77,7 @@ class ThreadListPageState extends State<ThreadListPage> with HorizontalDragMixin
     );
   }
 
-  Widget _buildContent(BuildContext context, AsyncSnapshot<List<ThreadInfo>> snapshot) {
+  Widget _buildContent(BuildContext context, AsyncSnapshot<List<BbsThreadInfo>> snapshot) {
     if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
       return ListView.builder(
         itemCount: snapshot.data!.length,
@@ -87,17 +89,25 @@ class ThreadListPageState extends State<ThreadListPage> with HorizontalDragMixin
     return const CircularProgressIndicator();
   }
 
-  Widget _buildListItem(BuildContext context, int index, List<ThreadInfo> data) {
+  Widget _buildListItem(BuildContext context, int index, List<BbsThreadInfo> data) {
     final threadInfo = data[index];
     BoxDecoration decoration = _buildItemDecoration(index);
 
-    return Container(
-      decoration: decoration,
-      child: ListTile(
-        title: Text(
-          threadInfo.title,
-          softWrap: true,
-          overflow: TextOverflow.visible,
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ResponseListPage(threadInfo: threadInfo)),
+        );
+      },
+      child: Container(
+        decoration: decoration,
+        child: ListTile(
+          title: Text(
+            threadInfo.title,
+            softWrap: true,
+            overflow: TextOverflow.visible,
+          ),
         ),
       ),
     );

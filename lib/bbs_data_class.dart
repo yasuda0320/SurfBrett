@@ -1,6 +1,6 @@
 class BbsCategory {
   final String categoryNumber;
-  final List<Board> boards;
+  final List<BbsBoard> boards;
   final int categoryTotal;
   final String categoryName;
 
@@ -13,7 +13,7 @@ class BbsCategory {
 
   factory BbsCategory.fromJson(Map<String, dynamic> json) {
     var list = json['category_content'] as List;
-    List<Board> boardList = list.map((i) => Board.fromJson(i)).toList();
+    List<BbsBoard> boardList = list.map((i) => BbsBoard.fromJson(i)).toList();
     return BbsCategory(
       categoryNumber: json['category_number'],
       boards: boardList,
@@ -23,7 +23,7 @@ class BbsCategory {
   }
 }
 
-class Board {
+class BbsBoard {
   final String url;
   final int category;
   final String categoryName;
@@ -31,7 +31,7 @@ class Board {
   final int categoryOrder;
   final String boardName;
 
-  Board({
+  BbsBoard({
     required this.url,
     required this.category,
     required this.categoryName,
@@ -40,8 +40,8 @@ class Board {
     required this.boardName,
   });
 
-  factory Board.fromJson(Map<String, dynamic> json) {
-    return Board(
+  factory BbsBoard.fromJson(Map<String, dynamic> json) {
+    return BbsBoard(
       url: json['url'],
       category: json['category'],
       categoryName: json['category_name'],
@@ -52,9 +52,15 @@ class Board {
   }
 }
 
-class ThreadInfo {
+class BbsThreadInfo {
   final String title;
   final String url;
 
-  ThreadInfo({required this.title, required this.url});
+  BbsThreadInfo({required this.title, required this.url});
+}
+
+class BbsResponse {
+  final String content;
+
+  BbsResponse({required this.content});
 }

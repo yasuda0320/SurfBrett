@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'board_list_page.dart';
-import 'bbs_category.dart';
+import 'bbs_data_class.dart';
 import 'common.dart';
 import 'shared_functions.dart';
 import 'slide_right_route.dart';

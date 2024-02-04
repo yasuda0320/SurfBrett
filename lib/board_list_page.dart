@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'bbs_category.dart';
+import 'bbs_data_class.dart';
 import 'shared_functions.dart';
 import 'common.dart';
 import 'slide_right_route.dart';
