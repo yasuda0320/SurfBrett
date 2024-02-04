@@ -3,12 +3,12 @@ import 'package:charset_converter/charset_converter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:html/parser.dart' as html_parser;
-import 'package:html/dom.dart' as dom;
 import 'horizontal_drag_mixin.dart';
-import 'common.dart';
+
 import 'bbs_data_class.dart';
+import 'common.dart';
 import 'response_list_page.dart';
+import 'shared_functions.dart';
 
 class ThreadListPage extends StatefulWidget {
   final BbsBoard board;
@@ -30,28 +30,30 @@ class ThreadListPageState
   }
 
   Future<List<BbsThreadInfo>> _fetchThreadTitles() async {
-    final response = await http.get(Uri.parse('${widget.board.url}${Common.subbackPath}'));
+    final response = await http.get(Uri.parse('${widget.board.url}${Common.subjectPath}'));
     if (response.statusCode != HttpStatus.ok) {
       if (kDebugMode) {
-        print('HTMLの取得に失敗しました');
+        print('スレッド一覧の取得に失敗しました');
       }
       return [];
     }
 
-    String charset = response.headers['content-type']?.split('charset=')[1] ?? Common.defaultCharset;
-    charset = (charset == Common.shiftJisCharset) ? Common.windowsCharset : charset;
-
     try {
+      String charset = getCharsetFromResponse(response);
       final decodedBody = await CharsetConverter.decode(charset, response.bodyBytes);
-      var document = html_parser.parse(decodedBody);
-      List<dom.Element> links = document.querySelectorAll(Common.threadListSelector);
-      List<BbsThreadInfo> threadInfoList = links.map((link) {
-        final title = link.text;
-        final url = link.attributes['href'] ?? ''; // hrefがない場合は空文字列を使用
-        final threadKey = url.split('/')[0];
-        final datUrl = '${widget.board.url}dat/$threadKey.dat';
-        return BbsThreadInfo(title: title, threadKey: threadKey, datUrl: datUrl);
-      }).toList();
+      final lines = decodedBody.split('\n').where((line) => line.isNotEmpty).toList();
+      List<BbsThreadInfo> threadInfoList = lines.map((line) {
+        final parts = line.split('<>');
+        if (parts.length >= 2) { // 有効なデータを持つ行のみ処理
+          final title = parts[1];
+          final dat = parts[0];
+          final threadKey = dat.split('.')[0];
+          final datUrl = '${widget.board.url}dat/$dat';
+          return BbsThreadInfo(title: title, threadKey: threadKey, datUrl: datUrl);
+        } else {
+          return null; // 不正なデータの場合はnullを返す
+        }
+      }).where((thread) => thread != null).cast<BbsThreadInfo>().toList(); // nullを除外してリストを作成
       return threadInfoList; //.reversed.toList();
     } catch (e) {
       if (kDebugMode) {

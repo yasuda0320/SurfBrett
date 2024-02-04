@@ -11,7 +11,7 @@ class Common {
   static const categoryListColumn = 2;
   static const boardListColumn = 2;
   static const bbsmenuUrl = 'https://menu.5ch.net/bbsmenu.json';
-  static const subbackPath = 'subback.html';
+  static const subjectPath = 'subject.txt';
   static const defaultCharset = 'UTF-8';
   static const shiftJisCharset = 'Shift_JIS';
   static const windowsCharset = 'windows-31j';
