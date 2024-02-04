@@ -48,7 +48,9 @@ class ThreadListPageState
       List<BbsThreadInfo> threadInfoList = links.map((link) {
         final title = link.text;
         final url = link.attributes['href'] ?? ''; // hrefがない場合は空文字列を使用
-        return BbsThreadInfo(title: title, url: url);
+        final threadKey = url.split('/')[0];
+        final datUrl = '${widget.board.url}dat/$threadKey.dat';
+        return BbsThreadInfo(title: title, threadKey: threadKey, datUrl: datUrl);
       }).toList();
       return threadInfoList; //.reversed.toList();
     } catch (e) {

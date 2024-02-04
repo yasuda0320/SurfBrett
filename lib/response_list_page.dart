@@ -1,6 +1,13 @@
+import 'dart:io';
+import 'package:charset_converter/charset_converter.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:html/parser.dart' as html_parser;
+import 'package:html/dom.dart' as dom;
 import 'bbs_data_class.dart';
 import 'horizontal_drag_mixin.dart';
+import 'common.dart';
 
 // レス表示ページのクラス
 class ResponseListPage extends StatefulWidget {
@@ -19,13 +26,38 @@ class ResponseListPageState
   @override
   void initState() {
     super.initState();
-    _responses = _fetchResponses(); // レスをフェッチする関数のダミー
+    _responses = _fetchResponses();
   }
 
   Future<List<BbsResponse>> _fetchResponses() async {
-    // ここでURLからレスをフェッチするロジックを実装
-    // 現時点ではダミーのリストを返す
-    return []; // TODO: 実際のフェッチ処理に置き換える
+    final response = await http.get(Uri.parse(widget.threadInfo.datUrl));
+    if (response.statusCode != HttpStatus.ok) {
+      if (kDebugMode) {
+        print('datの取得に失敗しました');
+      }
+      return [];
+    }
+
+    String contentType = response.headers['content-type'] ?? '';
+    String charset = Common.windowsCharset;
+    if (contentType.contains('charset=')) {
+      charset = contentType.split('charset=')[1].split(';')[0]; // charset=以降の文字列を取得し、さらに;で分割して最初の部分を使用
+    }
+    charset = (charset == Common.shiftJisCharset) ? Common.windowsCharset : charset;
+
+    try {
+      final decodedBody = await CharsetConverter.decode(charset, response.bodyBytes);
+      final links = decodedBody.split('\n');
+      List<BbsResponse> responseList = links.map((link) {
+        return BbsResponse(content: link);
+      }).toList();
+      return responseList;
+    } catch (e) {
+      if (kDebugMode) {
+        print('デコード中にエラーが発生しました。詳細: $e');
+      }
+      return [];
+    }
   }
 
   @override

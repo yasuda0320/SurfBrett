@@ -54,9 +54,10 @@ class BbsBoard {
 
 class BbsThreadInfo {
   final String title;
-  final String url;
+  final String threadKey;
+  final String datUrl;
 
-  BbsThreadInfo({required this.title, required this.url});
+  BbsThreadInfo({required this.title, required this.threadKey, required this.datUrl});
 }
 
 class BbsResponse {
