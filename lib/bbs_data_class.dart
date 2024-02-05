@@ -61,7 +61,17 @@ class BbsThreadInfo {
 }
 
 class BbsResponse {
+  final String name;
+  final String email;
+  final String dateAndId;
   final String content;
+  final String threadTitle;
 
-  BbsResponse({required this.content});
+  BbsResponse({
+    required this.name,
+    required this.email,
+    required this.dateAndId,
+    required this.content,
+    required this.threadTitle
+  });
 }

@@ -41,9 +41,22 @@ class ResponseListPageState
       String charset = getCharsetFromResponse(response);
       final decodedBody = await CharsetConverter.decode(charset, response.bodyBytes);
       final links = decodedBody.split('\n');
-      List<BbsResponse> responseList = links.map((link) {
-        return BbsResponse(content: link);
-      }).toList();
+      List<BbsResponse> responseList = links.where((link) => link.isNotEmpty).map((link) {
+        final parts = link.split('<>'); // `<>`を区切り文字として分割
+        if (parts.length >= 5) { // 期待される5つのパートが存在するかチェック
+          // 各パートをBbsResponseオブジェクトにマッピング
+          return BbsResponse(
+            name: parts[0],
+            email: parts[1],
+            dateAndId: parts[2],
+            content: parts[3],
+            threadTitle: parts.length > 4 ? parts[4] : '', // スレッドタイトルは省略可能とする
+          );
+        } else {
+          // パートが不足している場合はnullを返し、後でフィルタリング
+          return null;
+        }
+      }).where((response) => response != null).cast<BbsResponse>().toList();
       return responseList;
     } catch (e) {
       if (kDebugMode) {
