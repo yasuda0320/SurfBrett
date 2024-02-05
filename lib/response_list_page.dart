@@ -44,12 +44,13 @@ class ResponseListPageState
       List<BbsResponse> responseList = links.where((link) => link.isNotEmpty).map((link) {
         final parts = link.split('<>'); // `<>`を区切り文字として分割
         if (parts.length >= 5) { // 期待される5つのパートが存在するかチェック
-          // 各パートをBbsResponseオブジェクトにマッピング
+          // コンテンツ部分の`<br>`を`\n`に置き換え
+          String content = parts[3].replaceAll('<br>', '\n');
           return BbsResponse(
             name: parts[0],
             email: parts[1],
             dateAndId: parts[2],
-            content: parts[3],
+            content: content, // 置き換えられたコンテンツを使用
             threadTitle: parts.length > 4 ? parts[4] : '', // スレッドタイトルは省略可能とする
           );
         } else {
