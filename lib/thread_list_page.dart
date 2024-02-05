@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:charset_converter/charset_converter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:html_unescape/html_unescape.dart';
 import 'package:http/http.dart' as http;
 import 'horizontal_drag_mixin.dart';
 
@@ -96,6 +97,8 @@ class ThreadListPageState
   Widget _buildListItem(BuildContext context, int index, List<BbsThreadInfo> data) {
     final threadInfo = data[index];
     BoxDecoration decoration = _buildItemDecoration(index);
+    var unescape = HtmlUnescape();
+    var titleDecoded = unescape.convert(threadInfo.title);
 
     return GestureDetector(
       onTap: () {
@@ -108,7 +111,7 @@ class ThreadListPageState
         decoration: decoration,
         child: ListTile(
           title: Text(
-            threadInfo.title,
+            titleDecoded,
             softWrap: true,
             overflow: TextOverflow.visible,
           ),
