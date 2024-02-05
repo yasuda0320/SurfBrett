@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -9,7 +10,10 @@ class CustomResponseWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 正規表現でURLを検出
-    final urlPattern = RegExp(r'(http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)');
+    final urlPattern = RegExp(
+        r'(http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)|'
+        r'(sssp://img\.5ch\.net/ico/[^<>\s]+\.gif)'
+    );
     final matches = urlPattern.allMatches(content);
 
     List<Widget> children = [];
@@ -21,14 +25,27 @@ class CustomResponseWidget extends StatelessWidget {
       if (match.start > lastMatchEnd) {
         children.add(Text(content.substring(lastMatchEnd, match.start)));
       }
-      // URLが画像の場合はImage.networkを、そうでない場合はリンクとして表示
-      if (urlString.endsWith('.jpg') || urlString.endsWith('.png') || urlString.endsWith('.gif')) {
-        children.add(Image.network(urlString));
+      // "sssp://" URLを"https://"に置き換える
+      final displayUrl = urlString.startsWith('sssp') ? urlString.replaceFirst('sssp', 'https') : urlString;
+      // URLが画像の場合はImage.networkを使用して表示
+      if (displayUrl.endsWith('.jpg') || displayUrl.endsWith('.png') || displayUrl.endsWith('.gif') ||
+          displayUrl.endsWith('.jpeg') || displayUrl.endsWith('.bmp') || displayUrl.endsWith('.tif') || displayUrl.endsWith('.tiff')) {
+        children.add(Image.network(displayUrl));
       } else {
-        // URLをタップ可能にしてブラウザで開く
+        // 画像以外のURLをタップ可能にしてブラウザで開く
         children.add(InkWell(
-          child: Text(urlString, style: const TextStyle(color: Colors.blue)),
-          onTap: () => launch(urlString),
+          child: Text(displayUrl, style: const TextStyle(color: Colors.blue)),
+          onTap: () async {
+            final url = Uri.parse(displayUrl);
+            if (await canLaunchUrl(url)) {
+              await launchUrl(url);
+            } else {
+              // URLを開けなかった場合の処理
+              if (kDebugMode) {
+                print('URLを開けません: $url');
+              }
+            }
+          },
         ));
       }
       lastMatchEnd = match.end;
