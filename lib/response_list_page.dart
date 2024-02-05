@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'bbs_data_class.dart';
+import 'custom_response_widget.dart';
 import 'horizontal_drag_mixin.dart';
 import 'shared_functions.dart';
 
@@ -104,7 +105,7 @@ class ResponseListPageState
     return Column(
       children: <Widget>[
         ListTile(
-          title: Text(response.content),
+          title: CustomResponseWidget(content: response.content),
         ),
         const Divider(), // レス間にグリッド線を追加
       ],
