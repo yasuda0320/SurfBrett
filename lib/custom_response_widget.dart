@@ -19,9 +19,7 @@ class CustomResponseWidget extends StatelessWidget {
   }
 
   List<Widget> _parseContent(BuildContext context, String content) {
-    // HtmlUnescapeのインスタンスを生成
     final unescape = HtmlUnescape();
-
     final children = <Widget>[];
     final urlPattern = RegExp(
         r'<a href="(.*?)">(.*?)<\/a>|'
@@ -36,10 +34,11 @@ class CustomResponseWidget extends StatelessWidget {
       final fullMatch = match.group(0)!;
       // URLの前のテキストを追加
       if (match.start > lastMatchEnd) {
-        children.add(Text(content.substring(lastMatchEnd, match.start)));
+        // タグの外側のテキストをデコードして追加
+        children.add(Text(unescape.convert(content.substring(lastMatchEnd, match.start))));
       }
 
-      if (fullMatch.startsWith('<a href="')) { // <a>タグが見つかった場合
+      if (fullMatch.startsWith('<a href="')) {
         final href = match.group(1)!;
         final linkText = match.group(2)!;
         children.add(InkWell(
@@ -54,9 +53,9 @@ class CustomResponseWidget extends StatelessWidget {
       lastMatchEnd = match.end;
     }
 
-    // 最後のURLの後のテキストを追加
+    // 最後のURLの後のテキスト（タグの外側）をデコードして追加
     if (lastMatchEnd < content.length) {
-      children.add(Text(content.substring(lastMatchEnd)));
+      children.add(Text(unescape.convert(content.substring(lastMatchEnd))));
     }
 
     return children;
