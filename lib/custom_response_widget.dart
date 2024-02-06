@@ -5,8 +5,9 @@ import 'package:html_unescape/html_unescape.dart';
 
 class CustomResponseWidget extends StatelessWidget {
   final String content;
+  final String baseUrl;
 
-  const CustomResponseWidget({super.key, required this.content});
+  const CustomResponseWidget({super.key, required this.content, required this.baseUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +42,15 @@ class CustomResponseWidget extends StatelessWidget {
       if (fullMatch.startsWith('<a href="')) {
         final href = match.group(1)!;
         final linkText = match.group(2)!;
+        // 相対パスを絶対パスに変換
+        String absoluteUrl = href;
+        if (href.startsWith('../test/read.cgi/')) {
+          // Uri.parse(baseUrl)でベースURLをUriオブジェクトに変換し、resolveメソッドを使用して絶対パスを生成
+          absoluteUrl = Uri.parse(baseUrl).resolve(href.substring(3)).toString();
+        }
         children.add(InkWell(
           child: Text(unescape.convert(linkText), style: const TextStyle(color: Colors.blue)),
-          onTap: () => _showPopup(context, href),
+          onTap: () => _showPopup(context, absoluteUrl),
         ));
       } else { // 通常のURLの処理
         final displayUrl = fullMatch.startsWith('sssp') ? fullMatch.replaceFirst('sssp', 'https') : fullMatch;

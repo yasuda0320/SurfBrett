@@ -102,13 +102,28 @@ class ResponseListPageState
 
   Widget _buildListItem(BuildContext context, int index, List<BbsResponse> data) {
     final response = data[index];
+    String baseUrl = removeFileNameFromUrlString(widget.threadInfo.datUrl);
+    baseUrl = removeFileNameFromUrlString(baseUrl);
+    baseUrl = '${removeFileNameFromUrlString(baseUrl)}/';
     return Column(
       children: <Widget>[
         ListTile(
-          title: CustomResponseWidget(content: response.content),
+          title: CustomResponseWidget(content: response.content, baseUrl: baseUrl),
         ),
         const Divider(), // レス間にグリッド線を追加
       ],
     );
+  }
+
+  String removeFileNameFromUrlString(String url) {
+    // 最後の '/' の位置を見つける
+    int lastSlashIndex = url.lastIndexOf('/');
+    if (lastSlashIndex == -1) {
+      // '/' が見つからない場合は、元のURLをそのまま返す
+      return url;
+    } else {
+      // 最後の '/' までの部分を取得して返す
+      return url.substring(0, lastSlashIndex);
+    }
   }
 }
