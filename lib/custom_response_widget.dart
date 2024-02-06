@@ -10,7 +10,6 @@ class CustomResponseWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // コンテンツをパースしてウィジェットリストを生成
     final children = _parseContent(context, content);
 
     return Column(
@@ -19,60 +18,83 @@ class CustomResponseWidget extends StatelessWidget {
     );
   }
 
-  // コンテンツを解析してウィジェットリストを生成するメソッド
   List<Widget> _parseContent(BuildContext context, String content) {
+    // HtmlUnescapeのインスタンスを生成
     final unescape = HtmlUnescape();
-    final children = <Widget>[];
 
-    // HTMLエンティティをデコード
-    final decodedContent = unescape.convert(content);
-    // 正規表現でURLを検出
+    final children = <Widget>[];
     final urlPattern = RegExp(
+        r'<a href="(.*?)">(.*?)<\/a>|'
         r'(http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)|'
         r'(sssp://img\.5ch\.net/ico/[^<>\s]+\.gif)'
     );
-    final matches = urlPattern.allMatches(decodedContent);
+    final matches = urlPattern.allMatches(content);
 
     int lastMatchEnd = 0;
 
     for (final match in matches) {
-      final urlString = match.group(0)!;
+      final fullMatch = match.group(0)!;
       // URLの前のテキストを追加
       if (match.start > lastMatchEnd) {
-        children.add(Text(decodedContent.substring(lastMatchEnd, match.start)));
+        children.add(Text(content.substring(lastMatchEnd, match.start)));
       }
-      // URLを表示するウィジェットを追加
-      children.add(_buildUrlWidget(context, urlString));
+
+      if (fullMatch.startsWith('<a href="')) { // <a>タグが見つかった場合
+        final href = match.group(1)!;
+        final linkText = match.group(2)!;
+        children.add(InkWell(
+          child: Text(unescape.convert(linkText), style: const TextStyle(color: Colors.blue)),
+          onTap: () => _showPopup(context, href),
+        ));
+      } else { // 通常のURLの処理
+        final displayUrl = fullMatch.startsWith('sssp') ? fullMatch.replaceFirst('sssp', 'https') : fullMatch;
+        children.add(_buildUrlWidget(context, displayUrl));
+      }
+
       lastMatchEnd = match.end;
     }
+
     // 最後のURLの後のテキストを追加
-    if (lastMatchEnd < decodedContent.length) {
-      children.add(Text(decodedContent.substring(lastMatchEnd)));
+    if (lastMatchEnd < content.length) {
+      children.add(Text(content.substring(lastMatchEnd)));
     }
 
     return children;
   }
 
-  // URLに応じたウィジェットを生成するメソッド
+  void _showPopup(BuildContext context, String href) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text(href),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('閉じる'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildUrlWidget(BuildContext context, String urlString) {
-    // "sssp://" URLを"https://"に置き換える
-    final displayUrl = urlString.startsWith('sssp') ? urlString.replaceFirst('sssp', 'https') : urlString;
     // URLが画像の場合はImage.networkを使用して表示
-    if (displayUrl.endsWith('.jpg') || displayUrl.endsWith('.png') || displayUrl.endsWith('.gif') ||
-        displayUrl.endsWith('.jpeg') || displayUrl.endsWith('.bmp') || displayUrl.endsWith('.tif') || displayUrl.endsWith('.tiff')) {
-      return Image.network(displayUrl);
+    if (urlString.endsWith('.jpg') || urlString.endsWith('.png') || urlString.endsWith('.gif') ||
+        urlString.endsWith('.jpeg') || urlString.endsWith('.bmp') || urlString.endsWith('.tif') || urlString.endsWith('.tiff')) {
+      return Image.network(urlString);
     } else {
       // 画像以外のURLをタップ可能にしてブラウザで開く
       return InkWell(
-        child: Text(displayUrl, style: const TextStyle(color: Colors.blue)),
+        child: Text(urlString, style: const TextStyle(color: Colors.blue)),
         onTap: () async {
-          final url = Uri.parse(displayUrl);
+          final url = Uri.parse(urlString);
           if (await canLaunchUrl(url)) {
             await launchUrl(url);
           } else {
-            // URLを開けなかった場合の処理
             if (kDebugMode) {
-              print('URLを開けません: $url');
+              print('Could not launch $url');
             }
           }
         },
