@@ -10,6 +10,7 @@ import 'bbs_data_class.dart';
 import 'common.dart';
 import 'response_list_page.dart';
 import 'shared_functions.dart';
+import 'slide_right_route.dart';
 
 class ThreadListPage extends StatefulWidget {
   final BbsBoard board;
@@ -104,7 +105,7 @@ class ThreadListPageState
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ResponseListPage(threadInfo: threadInfo)),
+          SlideRightRoute(page: ResponseListPage(threadInfo: threadInfo)),
         );
       },
       child: Container(
