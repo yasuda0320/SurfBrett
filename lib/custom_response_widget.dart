@@ -23,7 +23,7 @@ class CustomResponseWidget extends StatelessWidget {
     final unescape = HtmlUnescape();
     final children = <Widget>[];
     final urlPattern = RegExp(
-        r'<a href="(.*?)">(.*?)<\/a>|'
+        r'<a\s+(?:[^>]*?\s+)?href="([^"]*)"(?:[^>]*)>(.*?)<\/a>|'
         r'(http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)|'
         r'(sssp://img\.5ch\.net/ico/[^<>\s]+\.gif)'
     );
