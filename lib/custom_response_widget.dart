@@ -90,26 +90,13 @@ class CustomResponseWidget extends StatelessWidget {
     if (urlString.endsWith('.jpg') || urlString.endsWith('.png') || urlString.endsWith('.gif') ||
         urlString.endsWith('.jpeg') || urlString.endsWith('.bmp') || urlString.endsWith('.tif') || urlString.endsWith('.tiff')) {
       return GestureDetector(
-        onTap: () {
-          // 画像をタップしたときにフルサイズで画像を表示するポップアップを表示
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return Dialog(
-                child: Container(
-                  width: double.maxFinite,
-                  child: Image.network(urlString, fit: BoxFit.contain),
-                ),
-              );
-            },
-          );
-        },
-        child: Container(
-          // サムネイルを表示するためにサイズを小さく設定
-          width: 100, // サムネイルの幅
-          height: 100, // サムネイルの高さ
-          child: Image.network(urlString, fit: BoxFit.cover),
+        onTap: () => showDialog(
+          context: context,
+          builder: (context) => Dialog(
+            child: Image.network(urlString, fit: BoxFit.contain),
+          ),
         ),
+        child: Image.network(urlString, width: 50, height: 50, fit: BoxFit.cover),
       );
     } else {
       // 画像以外のURLをタップ可能にしてブラウザで開く
