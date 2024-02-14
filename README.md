@@ -1,16 +1,17 @@
-# SurfBrett
+インプリメント済みの主な機能です。
+- カテゴリ一覧表示
+- 板一覧表示
+- スレ一覧表示
+- レス一覧表示
+- スライドアニメーションでの画面間の遷移
+- 左から右へのフリックでの前画面への遷移
+- レス一覧での画像のサムネイル表示とタップでの拡大
 
-A new Flutter project.
+todo
+- レス内容以外のレス番号や時刻などの表示
+- サムネイルをレスの下に集めて横並びでの表示
+- アンカーをタップでレス内容表示
+- レスのツリー表示
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![](https://storage.googleapis.com/zenn-user-upload/946e4d9311f9-20240210.gif)
+![](https://storage.googleapis.com/zenn-user-upload/cef6ea41871f-20240210.gif)
