@@ -47,8 +47,17 @@ class BoardListPageState extends State<BoardListPage> with HorizontalDragMixin {
       decoration: BoxDecoration(
         border: determineBorder(index, Common.boardListColumn),
       ),
-      alignment: Alignment.center,
-      child: Text(widget.category.boards[index].boardName),
+      // alignment: Alignment.center, // この行は削除またはコメントアウトします
+      child: Align(
+        alignment: Alignment.centerLeft, // ここでテキストを左寄せに設定
+        child: Padding(
+          padding: const EdgeInsets.all(15.0), // 左寄せテキストのためのパディングを追加
+          child: Text(
+            widget.category.boards[index].boardName,
+            textAlign: TextAlign.left, // テキスト自体も左寄せにする
+          ),
+        ),
+      ),
     );
   }
 
