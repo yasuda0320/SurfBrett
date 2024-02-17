@@ -87,15 +87,24 @@ class JsonFetchPageState extends State<JsonFetchPage> {
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
-        SlideRightRoute(
-            page: BoardListPage(category: _categories[index])),
+        SlideRightRoute(page: BoardListPage(category: _categories[index])),
       ),
       child: Container(
         decoration: BoxDecoration(
           border: determineBorder(index, Common.categoryListColumn),
         ),
-        alignment: Alignment.center,
-        child: Text(_categories[index].categoryName),
+        // Containerのalignmentプロパティを削除または変更
+        // alignment: Alignment.center, // この行を削除またはコメントアウト
+        child: Align(
+          alignment: Alignment.centerLeft, // ここでAlignウィジェットを使って左寄せを明示
+          child: Padding(
+            padding: const EdgeInsets.all(15.0), // 左寄せテキストのためのパディング
+            child: Text(
+              _categories[index].categoryName,
+              textAlign: TextAlign.left, // テキスト自体の左寄せを保持
+            ),
+          ),
+        ),
       ),
     );
   }
