@@ -15,5 +15,5 @@ todo
 - アンカーをタップでレス内容表示
 - レスのツリー表示
 
-![](https://storage.googleapis.com/zenn-user-upload/946e4d9311f9-20240210.gif)
+![](https://storage.googleapis.com/zenn-user-upload/cac31ba84bfa-20240218.gif)
 ![](https://storage.googleapis.com/zenn-user-upload/cef6ea41871f-20240210.gif)
