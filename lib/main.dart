@@ -8,6 +8,7 @@ import 'bbs_data_class.dart';
 import 'common.dart';
 import 'shared_functions.dart';
 import 'slide_right_route.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() => runApp(const MyApp());
 
@@ -16,9 +17,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Flutter Demo',
-      home: JsonFetchPage(),
+    const locale = Locale("ja", "JP");
+    return MaterialApp(
+      title: 'SurfBrett',
+      theme: ThemeData(
+        fontFamily: 'NotoSansJP', // ここに日本語フォントファミリーを指定
+      ),
+      locale: locale,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        locale,
+      ],
+      home: const JsonFetchPage(),
     );
   }
 }
@@ -98,7 +112,7 @@ class JsonFetchPageState extends State<JsonFetchPage> {
         child: Text(
           _categories[index].categoryName,
           overflow: TextOverflow.ellipsis, // テキストがオーバーフローしたら省略記号を表示
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16, // Increase the font size
           ),
         ),

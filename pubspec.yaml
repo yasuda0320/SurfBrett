@@ -30,7 +30,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.13.3
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+  http: ^1.2.1
   charset_converter: ^2.0.0
   html: ^0.15.0
   url_launcher: ^6.2.4
@@ -93,3 +96,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  fonts:
+    - family: NotoSansJP
+      fonts:
+        - asset: fonts/NotoSansJP-Regular.ttf
