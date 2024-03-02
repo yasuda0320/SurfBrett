@@ -55,6 +55,10 @@ class BoardListPageState extends State<BoardListPage> with HorizontalDragMixin {
           child: Text(
             widget.category.boards[index].boardName,
             textAlign: TextAlign.left, // テキスト自体も左寄せにする
+            overflow: TextOverflow.ellipsis, // テキストがオーバーフローしたら省略記号を表示
+            style: const TextStyle(
+              fontSize: 16, // Increase the font size
+            ),
           ),
         ),
       ),
