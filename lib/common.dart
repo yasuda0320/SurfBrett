@@ -5,7 +5,7 @@ class Common {
     crossAxisCount: 2, // 2列で表示
     crossAxisSpacing: 0.0, // 横方向の間隔
     mainAxisSpacing: 0.0, // 縦方向の間隔（行間）を小さくする
-    childAspectRatio: 4, // アイテムの縦横比を調整
+    childAspectRatio: 3.4, // アイテムの縦横比を調整
   );
   static const bbsTitle = '5ちゃんねる';
   static const categoryListColumn = 2;

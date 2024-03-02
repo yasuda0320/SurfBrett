@@ -93,16 +93,13 @@ class JsonFetchPageState extends State<JsonFetchPage> {
         decoration: BoxDecoration(
           border: determineBorder(index, Common.categoryListColumn),
         ),
-        // Containerのalignmentプロパティを削除または変更
-        // alignment: Alignment.center, // この行を削除またはコメントアウト
-        child: Align(
-          alignment: Alignment.centerLeft, // ここでAlignウィジェットを使って左寄せを明示
-          child: Padding(
-            padding: const EdgeInsets.all(15.0), // 左寄せテキストのためのパディング
-            child: Text(
-              _categories[index].categoryName,
-              textAlign: TextAlign.left, // テキスト自体の左寄せを保持
-            ),
+        padding: const EdgeInsets.symmetric(horizontal: 15.0), // 左右にパディングを設定
+        alignment: Alignment.centerLeft, // テキストを左寄せにする
+        child: Text(
+          _categories[index].categoryName,
+          overflow: TextOverflow.ellipsis, // テキストがオーバーフローしたら省略記号を表示
+          style: TextStyle(
+            fontSize: 16, // Increase the font size
           ),
         ),
       ),
