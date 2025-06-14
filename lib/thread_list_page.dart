@@ -15,7 +15,7 @@ import 'slide_right_route.dart';
 class ThreadListPage extends StatefulWidget {
   final BbsBoard board;
 
-  const ThreadListPage({Key? key, required this.board}) : super(key: key);
+  const ThreadListPage({super.key, required this.board});
 
   @override
   ThreadListPageState createState() => ThreadListPageState();

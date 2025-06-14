@@ -9,7 +9,7 @@ import 'horizontal_drag_mixin.dart';
 class BoardListPage extends StatefulWidget {
   final BbsCategory category;
 
-  const BoardListPage({Key? key, required this.category}) : super(key: key);
+  const BoardListPage({super.key, required this.category});
 
   @override
   BoardListPageState createState() => BoardListPageState();

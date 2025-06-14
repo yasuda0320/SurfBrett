@@ -13,7 +13,7 @@ import 'shared_functions.dart';
 class ResponseListPage extends StatefulWidget {
   final BbsThreadInfo threadInfo;
 
-  const ResponseListPage({Key? key, required this.threadInfo}) : super(key: key);
+  const ResponseListPage({super.key, required this.threadInfo});
 
   @override
   ResponseListPageState createState() => ResponseListPageState();
