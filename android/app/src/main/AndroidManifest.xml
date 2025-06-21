@@ -35,4 +35,16 @@
             android:value="false" />
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
+    
+    <!-- Android 12+ Splash Screen API support -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="http" />
+        </intent>
+    </queries>
 </manifest>

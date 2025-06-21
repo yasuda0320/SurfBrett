@@ -4,28 +4,40 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
-def localProperties = new Properties()
+def localProperties = [:]
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
     localPropertiesFile.withReader('UTF-8') { reader ->
-        localProperties.load(reader)
+        reader.readLines().each { line ->
+            if (line.contains('=') && !line.startsWith('#')) {
+                def (key, value) = line.split('=', 2)
+                localProperties[key.trim()] = value.trim()
+            }
+        }
     }
 }
 
-def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+def flutterVersionCode = localProperties['flutter.versionCode']
 if (flutterVersionCode == null) {
     flutterVersionCode = '1'
 }
 
-def flutterVersionName = localProperties.getProperty('flutter.versionName')
+def flutterVersionName = localProperties['flutter.versionName']
 if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
-def keystoreProperties = new Properties()
+def keystoreProperties = [:]
 def keystorePropertiesFile = rootProject.file('key.properties')
 if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    keystorePropertiesFile.withReader('UTF-8') { reader ->
+        reader.readLines().each { line ->
+            if (line.contains('=') && !line.startsWith('#')) {
+                def (key, value) = line.split('=', 2)
+                keystoreProperties[key.trim()] = value.trim()
+            }
+        }
+    }
 }
 
 android {
@@ -52,7 +64,7 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 29
+        targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
